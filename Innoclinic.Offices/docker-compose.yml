@@ -1,0 +1,35 @@
+version: '3.4'
+
+services:
+  offices.api:
+    image: ${DOCKER_REGISTRY-}officesapi
+    build:
+      context: .
+      dockerfile: Offices.API/Dockerfile
+    depends_on:
+      - azurite
+  
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite:latest
+    command: azurite --loose --blobHost 0.0.0.0 --blobPort 10020 --queueHost 0.0.0.0 --queuePort 10021 --tableHost 0.0.0.0 --tablePort 10022
+    hostname: azurite
+    ports:
+      - 10020:10020
+      - 10021:10021
+      - 10022:10022
+    volumes:
+       - azuriteData:/data
+    restart: on-failure
+  
+  mongo:
+    image: mongo
+    container_name: mongo
+    restart: on-failure
+    ports:
+      - 27017:27017
+    volumes:
+       - mongoDbData:/var/lib/mongo/data
+
+volumes:
+  azuriteData:
+  mongoDbData:
