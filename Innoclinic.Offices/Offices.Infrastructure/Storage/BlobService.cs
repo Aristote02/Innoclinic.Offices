@@ -60,16 +60,24 @@ public class BlobService : IBlobService
 	}
 
 	/// <summary>
-	/// Method to retrieve a blob
+	/// Retrieves the URL of a blob by its Id
 	/// </summary>
-	/// <param name="blobName">The name of the blob</param>
-	/// <returns>The blob content as a stream</returns>
-	public async Task<Stream> GetBlobAsync(string blobName)
+	/// <param name="blobId">The url or id of the blob as a string</param>
+	/// <returns></returns>
+	/// <exception cref="NotFoundException">Thrown when the blob does not exist</exception>
+	public async Task<string> GetBlobUrlByIdAsync(string blobId)
 	{
-		var blobclient = _blobContainerClient.GetBlobClient(blobName);
-		var downloadInfo = await blobclient.DownloadAsync();
+		var blobClient = new BlobClient(new Uri($"{_blobContainerClient.Uri.ToString()}/{blobId}"),
+				new StorageSharedKeyCredential(_options.AccountName, _options.PrimaryKey));
+		_logger.LogInformation("Uploading blob {blobId} to container {ContainerName}", blobId, _options.ContainerName);
 
-		return downloadInfo.Value.Content;
+		if (!await blobClient.ExistsAsync())
+		{
+			_logger.LogError("The file with the url: {url} does not exist", blobId);
+			throw new NotFoundException($"The file with the url: {blobId} does not exist");
+		}
+
+		return blobClient.Uri.ToString();
 	}
 
 	/// <summary>

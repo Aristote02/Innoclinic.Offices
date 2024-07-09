@@ -23,12 +23,19 @@ public interface IOfficeService
 	Task<OfficeDto> GetOfficeByIdAsync(Guid officeId);
 
 	/// <summary>
-	/// Method to add a new office
+	/// Method to retrieve the office's picture by its Id
 	/// </summary>
-	/// <param name="officeRequest">The request object containing the details of the office to add</param>
-	/// <param name="cancellationToken">Cancellation token for the asynchronous operation</param>
-	/// <returns>An OfficeDto object representing the added office</returns>
-	Task<OfficeDto> AddOfficeAsync(OfficeRequest officeRequest, CancellationToken cancellationToken);
+	/// <param name="officeId">The office Id</param>
+	/// <returns></returns>
+	Task<string> GetOfficePictureUrlByIdAsync(Guid officeId);
+
+    /// <summary>
+    /// Method to add a new office
+    /// </summary>
+    /// <param name="officeRequest">The request object containing the details of the office to add</param>
+    /// <param name="cancellationToken">Cancellation token for the asynchronous operation</param>
+    /// <returns>An OfficeDto object representing the added office</returns>
+    Task<OfficeDto> AddOfficeAsync(OfficeRequest officeRequest, CancellationToken cancellationToken);
 
 	/// <summary>
 	/// Method to update the existing office

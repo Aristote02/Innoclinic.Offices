@@ -23,9 +23,9 @@ public interface IBlobService
 	Task DeleteBlobAsync(string blobName);
 
 	/// <summary>
-	/// Method to retrieves a blob from the storage
+	/// Methods to retrieve the URL of a blob by its Id
 	/// </summary>
-	/// <param name="blobName">The name of the blob to retrieve</param>
-	/// <returns>The content of the blob as a stream</returns>
-	Task<Stream> GetBlobAsync(string blobName);
+	/// <param name="blobId"></param>
+	/// <returns></returns>
+	Task<string> GetBlobUrlByIdAsync(string blobId);
 }

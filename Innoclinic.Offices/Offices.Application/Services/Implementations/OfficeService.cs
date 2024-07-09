@@ -63,7 +63,7 @@ public class OfficeService : IOfficeService
 		{
 			var photoStream = officeRequest.Photo.OpenReadStream();
 			var photoUri = await _blobService.UploadBlobAsync(photoStream, officeRequest.Photo.ContentType,
-				$"{officeId}_{officeRequest.Photo.FileName}");
+				$"{officeId}");
 			office.PhotoId = photoUri;
 		}
 
@@ -127,6 +127,25 @@ public class OfficeService : IOfficeService
 		}
 
 		return _mapper.Map<OfficeDto>(office);
+	}
+
+	public async Task<string> GetOfficePictureUrlByIdAsync(Guid officeId)
+	{
+		var office = await _officeRepository.GetOfficeByIdAsync(officeId);
+		if (office is null)
+		{
+			_logger.LogError("There is not any office with that id : {officeId}", officeId);
+			throw new NotFoundException($"There is not any office with this id: {officeId}");
+		}
+
+		var photoId = office.PhotoId;
+		if (string.IsNullOrEmpty(photoId))
+		{
+			_logger.LogError("The office with id: {officeId} does not have a picture", officeId);
+			throw new NotFoundException($"The office with id: {officeId} does not have a picture");
+		}
+
+		return await _blobService.GetBlobUrlByIdAsync(officeId.ToString());
 	}
 
 	/// <summary>

@@ -1,6 +1,4 @@
-using Microsoft.Extensions.Azure;
 using Microsoft.OpenApi.Models;
-using Offices.API;
 using Offices.API.Extensions;
 using Offices.Infrastructure.Configurations;
 
@@ -23,11 +21,6 @@ builder.Services.Configure<BlobStorageConfigurations>(builder.Configuration
 
 builder.Services.ConfigureBlobStorageServices();
 builder.ConfigureServices();
-
-builder.Services.AddAzureClients(clientBuilder =>
-{
-	clientBuilder.AddBlobServiceClient(builder.Configuration["BlobStorageConfigurations:ConnectionString"]!, preferMsi: true);
-});
 
 var app = builder.Build();
 

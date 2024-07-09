@@ -87,6 +87,35 @@ public class OfficeController : ControllerBase
 	}
 
 	/// <summary>
+	/// Retrieve the office url by its id
+	/// </summary>
+	/// <param name="id"></param>
+	/// <remarks>
+	/// Sample request
+	/// 
+	///		GET api/offices/office/GetOfficePictureById
+	///		{
+	///			"officeId": "9190327b-ebc1-41f7-a127-b2d70275f558",
+	///		},
+	///		{
+	///			"url" : "http://host.docker.internal:10020/devstoreaccount1/innoclinicimages/9190327b-ebc1-41f7-a127-b2d70275f558"
+	///		}
+	/// </remarks>
+	/// <returns>the office's picture url</returns>
+	/// <returns>The officeUrl</returns>
+	/// <response code="200">Returns the office picture url successful</response>
+	/// <response code="400">If there is not any office with the given id</response>
+	[HttpGet("{id:guid}/picture", Name = "GetOfficePictureById")]
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	public async Task<IActionResult> GetOfficePictureByIdAsync(Guid id)
+	{
+		var pictureUrl = await _officeService.GetOfficePictureUrlByIdAsync(id);
+
+		return Ok(new { Url = pictureUrl });
+	}
+
+	/// <summary>
 	/// Creates a new office
 	/// </summary>
 	/// <remarks>
