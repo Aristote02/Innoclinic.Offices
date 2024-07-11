@@ -43,9 +43,10 @@ public class BlobService : IBlobService
 	/// Method to delete a blob from the storage
 	/// </summary>
 	/// <param name="blobName">The name of the blob to delete</param>
+	/// <param name="cancellationToken">The cancellation token</param>
 	/// <returns></returns>
 	/// <exception cref="NotFoundException">Thrown if the blob does not exist</exception>
-	public async Task DeleteBlobAsync(string blobName)
+	public async Task DeleteBlobAsync(string blobName, CancellationToken cancellationToken = default)
 	{
 		try
 		{
@@ -66,9 +67,10 @@ public class BlobService : IBlobService
 	/// Retrieves the URL of a blob by its Id
 	/// </summary>
 	/// <param name="blobId">The url or id of the blob as a string</param>
+	/// <param name="cancellationToken">The cancellation token</param>
 	/// <returns></returns>
 	/// <exception cref="NotFoundException">Thrown when the blob does not exist</exception>
-	public async Task<string> GetBlobUrlByIdAsync(string blobId)
+	public async Task<string> GetBlobUrlByIdAsync(string blobId, CancellationToken cancellationToken = default)
 	{
 		var blobClient = _blobClientFactory.CreateBlobClient($"{_blobContainerClient.Uri}/{blobId}");
 		_logger.LogInformation("Uploading blob {blobId} to container {ContainerName}", blobId, _options.ContainerName);
@@ -87,9 +89,10 @@ public class BlobService : IBlobService
 	/// </summary>
 	/// <param name="content">The content stream of the blob</param>
 	/// <param name="contentType">The content type of the blob</param>
-	/// <param name="blobName">The name of the blob</param>
+	/// <param name="blobName">The name of the Sblob</param>
+	/// <param name="cancellationToken">The cancellation token</param>
 	/// <returns>The URL of the uploaded blob</returns>
-	public async Task<string> UploadBlobAsync(Stream content, string contentType, string blobName)
+	public async Task<string> UploadBlobAsync(Stream content, string contentType, string blobName, CancellationToken cancellationToken = default)
 	{
 		var blobClient = _blobClientFactory.CreateBlobClient($"{_blobContainerClient.Uri}/{blobName}");
 		_logger.LogInformation("Uploading blob {blobName} to container {ContainerName}", blobName, _options.ContainerName);

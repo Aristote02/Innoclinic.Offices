@@ -8,14 +8,11 @@ using Microsoft.OpenApi.Models;
 using Offices.Application.Contracts.Services.Interfaces;
 using Offices.Application.Profiles;
 using Offices.Application.Services.Implementations;
-using Offices.Application.Validators;
 using Offices.Contracts.Repositories.Interfaces;
-using Offices.Domain.Exceptions;
 using Offices.Infrastructure.Configurations;
 using Offices.Infrastructure.Data;
 using Offices.Infrastructure.Repositories;
 using Offices.Infrastructure.Storage;
-using Offices.Shared.Requests;
 using Swashbuckle.AspNetCore.Filters;
 using System.Text;
 #endregion
@@ -53,7 +50,7 @@ public static class ApplicationDependenciesConfiguration
 			var options = x.GetRequiredService<IOptions<BlobStorageConfigurations>>().Value;
 			if (string.IsNullOrEmpty(options.ConnectionString))
 			{
-				throw new NotFoundException("The connection string for the blob storage was not found, it can't be null or empty");
+				throw new ArgumentException("The connection string for the blob storage was not found, it can't be null or empty");
 			}
 
 			return new BlobServiceClient(options.ConnectionString);
@@ -64,10 +61,7 @@ public static class ApplicationDependenciesConfiguration
 
 	public static IServiceCollection AddValidators(this IServiceCollection services)
 	{
-		services.AddValidatorsFromAssemblyContaining<OfficeRequestValidator>()
-			.AddScoped<IValidator<OfficeRequest>, OfficeRequestValidator>();
-
-		return services;
+		return services.AddValidatorsFromAssembly(Application.AssemblyReference.Assembly);
 	}
 
 	public static IServiceCollection ConfigureJwtAuth(this IServiceCollection services,
