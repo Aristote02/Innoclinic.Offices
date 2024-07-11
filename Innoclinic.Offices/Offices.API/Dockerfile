@@ -17,6 +17,7 @@ COPY ["Offices.Contracts/Offices.Contracts.csproj", "Offices.Contracts/"]
 COPY ["Offices.Domain/Offices.Domain.csproj", "Offices.Domain/"]
 COPY ["Offices.Infrastructure/Offices.Infrastructure.csproj", "Offices.Infrastructure/"]
 COPY ["Offices.Presentation/Offices.Presentation.csproj", "Offices.Presentation/"]
+COPY ["Offices.API/Innoclinic.pfx", "Offices.API/"]
 RUN dotnet restore "./Offices.API/Offices.API.csproj"
 COPY . .
 WORKDIR "/src/Offices.API"

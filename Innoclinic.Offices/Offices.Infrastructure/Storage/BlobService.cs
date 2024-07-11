@@ -1,10 +1,10 @@
 ﻿using Azure;
-using Azure.Storage;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Offices.Application.Contracts.Services.Interfaces;
+using Offices.Contracts.Repositories.Interfaces;
 using Offices.Domain.Exceptions;
 using Offices.Infrastructure.Configurations;
 
@@ -18,6 +18,7 @@ public class BlobService : IBlobService
 	private readonly BlobStorageConfigurations _options;
 	private readonly ILogger<BlobService> _logger;
 	private readonly BlobContainerClient _blobContainerClient;
+	private readonly IBlobClientFactory _blobClientFactory;
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="BlobService"/> class
@@ -25,14 +26,17 @@ public class BlobService : IBlobService
 	/// <param name="options">The Blob Storage Configurations options</param>
 	/// <param name="logger">The logger</param>
 	/// <param name="blobServiceClient">The Blob service client</param>
+	/// <param name="blobClientFactory">The Blob client factory</param>
 	public BlobService(IOptions<BlobStorageConfigurations> options,
 		ILogger<BlobService> logger,
-		BlobServiceClient blobServiceClient)
+		BlobServiceClient blobServiceClient,
+		IBlobClientFactory blobClientFactory)
 	{
 		_options = options.Value;
 		_logger = logger;
 		_blobContainerClient = blobServiceClient.GetBlobContainerClient(_options.ContainerName);
 		_blobContainerClient.CreateIfNotExists();
+		_blobClientFactory = blobClientFactory;
 	}
 
 	/// <summary>
@@ -45,11 +49,10 @@ public class BlobService : IBlobService
 	{
 		try
 		{
-			var containerClient = new BlobClient(new Uri(blobName), new
-				StorageSharedKeyCredential(_options.AccountName, _options.PrimaryKey));
+			var blobClient = _blobClientFactory.CreateBlobClient(blobName);
 			_logger.LogInformation("Attempting to delete blob with name: {blobName}", blobName);
 
-			await containerClient.DeleteIfExistsAsync();
+			await blobClient.DeleteIfExistsAsync();
 		}
 		catch (RequestFailedException exception) when (exception.Status == 404)
 		{
@@ -67,8 +70,7 @@ public class BlobService : IBlobService
 	/// <exception cref="NotFoundException">Thrown when the blob does not exist</exception>
 	public async Task<string> GetBlobUrlByIdAsync(string blobId)
 	{
-		var blobClient = new BlobClient(new Uri($"{_blobContainerClient.Uri.ToString()}/{blobId}"),
-				new StorageSharedKeyCredential(_options.AccountName, _options.PrimaryKey));
+		var blobClient = _blobClientFactory.CreateBlobClient($"{_blobContainerClient.Uri}/{blobId}");
 		_logger.LogInformation("Uploading blob {blobId} to container {ContainerName}", blobId, _options.ContainerName);
 
 		if (!await blobClient.ExistsAsync())
@@ -89,8 +91,7 @@ public class BlobService : IBlobService
 	/// <returns>The URL of the uploaded blob</returns>
 	public async Task<string> UploadBlobAsync(Stream content, string contentType, string blobName)
 	{
-		var blobClient = new BlobClient(new Uri($"{_blobContainerClient.Uri.ToString()}/{blobName}"),
-				new StorageSharedKeyCredential(_options.AccountName, _options.PrimaryKey));
+		var blobClient = _blobClientFactory.CreateBlobClient($"{_blobContainerClient.Uri}/{blobName}");
 		_logger.LogInformation("Uploading blob {blobName} to container {ContainerName}", blobName, _options.ContainerName);
 
 		await blobClient.UploadAsync(content, new BlobUploadOptions

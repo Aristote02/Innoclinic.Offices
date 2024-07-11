@@ -5,8 +5,8 @@
 /// </summary>
 public class BlobStorageConfigurations
 {
-	public string ConnectionString { get; set; } = string.Empty;
-	public string AccountName { get; set; } = string.Empty;
-	public string ContainerName { get; set; } = string.Empty;
-	public string PrimaryKey { get; set; } = string.Empty;
+	public required string ConnectionString { get; init; }
+	public required string AccountName { get; init; }
+	public required string ContainerName { get; init; }
+	public required string PrimaryKey { get; init; }
 }

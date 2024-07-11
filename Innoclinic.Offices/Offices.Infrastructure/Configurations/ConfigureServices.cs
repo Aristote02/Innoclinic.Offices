@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using Serilog;
 
@@ -19,11 +20,15 @@ public static class ConfigureServices
 	{
 		builder.Services.Configure<OfficeMongoDbSettings>(builder.Configuration.GetSection("OfficeMongoDbSettings"));
 
-		builder.Services.AddSingleton<IMongoClient>(_ =>
+		builder.Services.AddSingleton<IMongoClient>(serviceProvider=>
 		{
-			var connectionString = builder.Configuration.GetSection("OfficeMongoDbSettings:ConnectionString").Value;
+			var settings = serviceProvider.GetRequiredService<IOptions< OfficeMongoDbSettings>>().Value;
+			if (string.IsNullOrWhiteSpace(settings.ConnectionString))
+			{
+				throw new ArgumentException("Connection string for mongo db is not configured");
+			}
 
-			return new MongoClient(connectionString);
+			return new MongoClient(settings.ConnectionString);
 		});
 
 		return builder.Services;

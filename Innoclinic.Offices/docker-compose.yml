@@ -8,6 +8,7 @@ services:
       dockerfile: Offices.API/Dockerfile
     depends_on:
       - azurite
+      - mongodb
   
   azurite:
     image: mcr.microsoft.com/azure-storage/azurite:latest
@@ -21,9 +22,9 @@ services:
        - azuriteData:/data
     restart: on-failure
   
-  mongo:
+  mongodb:
     image: mongo
-    container_name: mongo
+    container_name: mongodb
     restart: on-failure
     ports:
       - 27017:27017

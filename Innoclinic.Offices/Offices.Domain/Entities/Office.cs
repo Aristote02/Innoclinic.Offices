@@ -18,13 +18,13 @@ public class Office
 	/// Gets or sets the address of the office
 	/// </summary>
 	[BsonElement("address")]
-	public string Address { get; set; } = null!;
+	public required string Address { get; init; }
 
 	/// <summary>
 	/// Gets or sets the registry phone number of the office
 	/// </summary>
 	[BsonElement("registryPhoneNumber")]
-	public string RegistryPhoneNumber { get; set; } = null!;
+	public required string RegistryPhoneNumber { get; init; }
 
 	/// <summary>
 	/// Gets or sets the identifier for the photo associated with the office

@@ -1,16 +1,24 @@
-﻿using Azure.Storage.Blobs;
+﻿#region NamespaceImportsAndDependencies
+using Azure.Storage.Blobs;
 using FluentValidation;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Offices.Application.Contracts.Services.Interfaces;
 using Offices.Application.Profiles;
 using Offices.Application.Services.Implementations;
 using Offices.Application.Validators;
 using Offices.Contracts.Repositories.Interfaces;
+using Offices.Domain.Exceptions;
 using Offices.Infrastructure.Configurations;
 using Offices.Infrastructure.Data;
 using Offices.Infrastructure.Repositories;
 using Offices.Infrastructure.Storage;
 using Offices.Shared.Requests;
+using Swashbuckle.AspNetCore.Filters;
+using System.Text;
+#endregion
 
 namespace Offices.API.Extensions;
 
@@ -32,7 +40,8 @@ public static class ApplicationDependenciesConfiguration
 		services.AddScoped<IMongoDbContext, MongoDbContext>()
 			.AddScoped<IOfficeService, OfficeService>()
 			.AddScoped<IOfficeRepository, OfficeRepository>()
-			.AddScoped<IBlobService, BlobService>();
+			.AddScoped<IBlobService, BlobService>()
+			.AddScoped<IBlobClientFactory, BlobClientFactory>();
 
 		return services;
 	}
@@ -42,6 +51,10 @@ public static class ApplicationDependenciesConfiguration
 		services.AddScoped<BlobServiceClient>(x =>
 		{
 			var options = x.GetRequiredService<IOptions<BlobStorageConfigurations>>().Value;
+			if (string.IsNullOrEmpty(options.ConnectionString))
+			{
+				throw new NotFoundException("The connection string for the blob storage was not found, it can't be null or empty");
+			}
 
 			return new BlobServiceClient(options.ConnectionString);
 		});
@@ -53,6 +66,50 @@ public static class ApplicationDependenciesConfiguration
 	{
 		services.AddValidatorsFromAssemblyContaining<OfficeRequestValidator>()
 			.AddScoped<IValidator<OfficeRequest>, OfficeRequestValidator>();
+
+		return services;
+	}
+
+	public static IServiceCollection ConfigureJwtAuth(this IServiceCollection services,
+		IConfiguration configuration)
+	{
+		services.AddAuthentication(options =>
+		{
+			options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+			options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+		})
+			.AddJwtBearer(options =>
+			{
+				options.TokenValidationParameters = new TokenValidationParameters
+				{
+					ValidateIssuer = false,
+					ValidateAudience = false,
+					ValidateIssuerSigningKey = true,
+					IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration.GetValue<string>("JwtSecretKey:Key")))
+				};
+			});
+
+		return services;
+	}
+
+	public static IServiceCollection ConfigureSwaggerGen(this IServiceCollection services)
+	{
+		services.AddSwaggerGen(c =>
+		{
+			c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+			{
+				Description = "Standard Authorisation header using the scheme (\"bearer {token}\")",
+				In = ParameterLocation.Header,
+				Name = "Authorization",
+				Type = SecuritySchemeType.ApiKey
+			});
+
+			c.OperationFilter<SecurityRequirementsOperationFilter>();
+
+			c.SwaggerDoc("v1", new OpenApiInfo { Title = "Office API", Version = "v1" });
+			var xmlPath = Path.Combine(AppContext.BaseDirectory, "Offices.Presentation.xml");
+			c.IncludeXmlComments(xmlPath);
+		});
 
 		return services;
 	}

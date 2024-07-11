@@ -8,15 +8,15 @@ public class OfficeMongoDbSettings
 	/// <summary>
 	/// Gets or sets the name of the offices collection
 	/// </summary>
-	public string OfficesCollectionName { get; set; } = null!;
+	public required string OfficesCollectionName { get; init; }
 
 	/// <summary>
 	/// Gets or sets the connection string
 	/// </summary>
-	public string ConnectionString { get; set; } = null!;
+	public required string ConnectionString { get; init; }
 
 	/// <summary>
 	/// Gets or sets the name of the database
 	/// </summary>
-	public string DataBaseName { get; set; } = null!;
+	public required string DataBaseName { get; init; }
 }

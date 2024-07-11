@@ -8,6 +8,7 @@ using Offices.Domain.Exceptions;
 using Offices.Shared.Dtos;
 using Offices.Shared.Requests;
 
+
 namespace Offices.Application.Services.Implementations;
 
 /// <summary>
@@ -59,10 +60,10 @@ public class OfficeService : IOfficeService
 
 		var office = _mapper.Map<Office>(officeRequest);
 		var officeId = Guid.NewGuid();
+
 		if (officeRequest.Photo is not null)
 		{
-			var photoStream = officeRequest.Photo.OpenReadStream();
-			var photoUri = await _blobService.UploadBlobAsync(photoStream, officeRequest.Photo.ContentType,
+			var photoUri = await _blobService.UploadBlobAsync(officeRequest.Photo, officeRequest.PhotoContentType,
 				$"{officeId}");
 			office.PhotoId = photoUri;
 		}
@@ -129,6 +130,12 @@ public class OfficeService : IOfficeService
 		return _mapper.Map<OfficeDto>(office);
 	}
 
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="officeId"></param>
+	/// <returns></returns>
+	/// <exception cref="NotFoundException"></exception>
 	public async Task<string> GetOfficePictureUrlByIdAsync(Guid officeId)
 	{
 		var office = await _officeRepository.GetOfficeByIdAsync(officeId);
@@ -149,7 +156,7 @@ public class OfficeService : IOfficeService
 	}
 
 	/// <summary>
-	/// Method to update and office by its Id
+	/// Method to update an office by its Id
 	/// </summary>
 	/// <param name="officeId">The office Id</param>
 	/// <param name="officeRequest">The office request</param>
@@ -172,42 +179,25 @@ public class OfficeService : IOfficeService
 			throw new NotFoundException($"There is not any office with this id: {officeId}");
 		}
 
-		if (officeRequest.Photo is not null)
+		if (officeRequest.Photo is null)
 		{
-			if (!string.IsNullOrEmpty(office.PhotoId))
-			{
-				await _blobService.DeleteBlobAsync(office.PhotoId);
-			}
+			_mapper.Map(officeRequest, office);
+			await _officeRepository.UpdateOfficeAsync(office);
 
-			var photoStream = officeRequest.Photo.OpenReadStream();
-			var photoUri = await _blobService.UploadBlobAsync(photoStream, officeRequest.Photo.ContentType,
-				$"{officeId}_{officeRequest.Photo.FileName}");
-			office.PhotoId = photoUri;
+			return _mapper.Map<OfficeDto>(office);
 		}
+
+		if (!string.IsNullOrEmpty(office.PhotoId))
+		{
+			await _blobService.DeleteBlobAsync(office.PhotoId);
+		}
+
+		var photoUri = await _blobService.UploadBlobAsync(officeRequest.Photo, officeRequest.PhotoContentType,
+			$"{officeId}");
+		office.PhotoId = photoUri;
 
 		_mapper.Map(officeRequest, office);
-		await _officeRepository.UpdateOfficeAsync(officeId, office);
-
-		return _mapper.Map<OfficeDto>(office);
-	}
-
-	/// <summary>
-	/// Method to update the status of an office by its Id
-	/// </summary>
-	/// <param name="officeId">The office Id</param>
-	/// <param name="isActive">The new status of the office</param>
-	/// <returns>The updated office as OfficeDto</returns>
-	/// <exception cref="NotFoundException">Thrown when the office is not found</exception>
-	public async Task<OfficeDto> UpdateOfficeStatusAsync(Guid officeId, bool isActive)
-	{
-		var office = await _officeRepository.GetOfficeByIdAsync(officeId);
-		if (office is null)
-		{
-			_logger.LogError("There is not any office with that id : {officeId}", officeId);
-			throw new NotFoundException($"There is not any office with this id: {officeId}");
-		}
-
-		await _officeRepository.UpdateOfficeStatusAsync(officeId, isActive);
+		await _officeRepository.UpdateOfficeAsync(office);
 
 		return _mapper.Map<OfficeDto>(office);
 	}

@@ -55,19 +55,8 @@ public class OfficeRepository : IOfficeRepository
 	/// <summary>
 	/// Method to update an existing Office entity in the database
 	/// </summary>
-	/// <param name="officeId">The Id of the office entity</param>
 	/// <param name="office">The updated office entity</param>
 	/// <returns></returns>
-	public async Task UpdateOfficeAsync(Guid officeId, Office office) =>
-		await _dbContext.Offices.ReplaceOneAsync(o => o.Id == officeId, office);
-
-	/// <summary>
-	/// Method to update the status of an Office entity
-	/// </summary>
-	/// <param name="officeId">The office Id</param>
-	/// <param name="isActive">The new status of the office entity</param>
-	/// <returns></returns>
-	public async Task UpdateOfficeStatusAsync(Guid officeId, bool isActive) =>
-		await _dbContext.Offices.UpdateOneAsync(o => o.Id == officeId,
-			Builders<Office>.Update.Set(o => o.IsActive, isActive));
+	public async Task UpdateOfficeAsync(Office office) =>
+		await _dbContext.Offices.ReplaceOneAsync(o => o.Id == office.Id, office);
 }

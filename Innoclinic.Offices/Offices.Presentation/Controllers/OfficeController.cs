@@ -17,6 +17,7 @@ public class OfficeController : ControllerBase
 		_blobService = blobService;
 	}
 
+	#region GetAllOffices
 	/// <summary>
 	/// Retrieves all offices
 	/// </summary>
@@ -44,6 +45,7 @@ public class OfficeController : ControllerBase
 	/// <returns>A list of offices</returns>
 	/// <response code="200">Returns all the offices successfully</response>
 	/// <response code="404">If there are not any single office in the database</response>
+	#endregion
 	[HttpGet]
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -54,6 +56,7 @@ public class OfficeController : ControllerBase
 		return Ok(offices);
 	}
 
+	#region GetOfficeById
 	/// <summary>
 	/// Retrieves an office by its Id
 	/// </summary>
@@ -76,6 +79,7 @@ public class OfficeController : ControllerBase
 	/// <returns>The existing office</returns>
 	/// <response code="200">Returns an office successful</response>
 	/// <response code="400">If there is not any office with the given id</response>
+	#endregion
 	[HttpGet("office/{id:guid}", Name = "GetOfficeById")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -86,6 +90,7 @@ public class OfficeController : ControllerBase
 		return Ok(result);
 	}
 
+	#region GetOfficePictureByIdAsync
 	/// <summary>
 	/// Retrieve the office url by its id
 	/// </summary>
@@ -105,6 +110,7 @@ public class OfficeController : ControllerBase
 	/// <returns>The officeUrl</returns>
 	/// <response code="200">Returns the office picture url successful</response>
 	/// <response code="400">If there is not any office with the given id</response>
+	#endregion
 	[HttpGet("{id:guid}/picture", Name = "GetOfficePictureById")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -115,6 +121,7 @@ public class OfficeController : ControllerBase
 		return Ok(new { Url = pictureUrl });
 	}
 
+	#region CreateOfficeAsync
 	/// <summary>
 	/// Creates a new office
 	/// </summary>
@@ -136,28 +143,43 @@ public class OfficeController : ControllerBase
 	///		- "(555) 123-4567"
 	///		- "+44 20 1234 5678"
 	/// </remarks>
-	/// <param name="officeRequest">The office request object</param>
+	/// <param name="formRequest">The office request object</param>
 	/// <param name="cancellationToken">The cancellation token</param>
 	/// <returns>A newly created office</returns>
 	/// <response code="201">Returns if an office was successfully created</response>
 	/// <response code="400">If the requested entity to be created was invalid </response>
 	/// <response code="500">If there was an internal server error</response>
+	#endregion
 	[HttpPost("office")]
 	[ProducesResponseType(StatusCodes.Status201Created)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-	public async Task<IActionResult> CreateOfficeAsync([FromForm] OfficeRequest officeRequest, CancellationToken cancellationToken)
+	public async Task<IActionResult> CreateOfficeAsync([FromForm] OfficeFormRequest formRequest, CancellationToken cancellationToken)
 	{
-		var office = await _officeService.AddOfficeAsync(officeRequest, cancellationToken);
+		var officeRequest = new OfficeRequest
+		{
+			Address = formRequest.Address,
+			RegistryPhoneNumber = formRequest.RegistryPhoneNumber,
+			IsActive = formRequest.IsActive
+		};
 
-		return Created(nameof(CreateOfficeAsync), office);
+		if (formRequest.Photo is not null)
+		{
+			officeRequest.Photo = formRequest.Photo.OpenReadStream();
+			officeRequest.PhotoContentType = formRequest.Photo.ContentType;
+		}
+
+		var result = await _officeService.AddOfficeAsync(officeRequest, cancellationToken);
+
+		return Created(nameof(CreateOfficeAsync), result);
 	}
 
+	#region UpdateOfficeAsync
 	/// <summary>
 	/// Updates an existing office
 	/// </summary>
 	/// <param name="officeId">The Id of the office</param>
-	/// <param name="officeRequest">The office request object</param>
+	/// <param name="formRequest">The office request object</param>
 	/// <remarks>
 	/// Sample request:
 	///	
@@ -182,43 +204,32 @@ public class OfficeController : ControllerBase
 	/// <response code="204">Returns if the office was successfully updated</response>
 	/// <response code="404">If there is no office with the given id</response>
 	/// <response code="500">If there was an internal server error</response>
+	#endregion
 	[HttpPut("office/{officeId:guid}")]
 	[ProducesResponseType(StatusCodes.Status204NoContent)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-	public async Task<IActionResult> UpdateOfficeAsync(Guid officeId, [FromForm] OfficeRequest officeRequest)
+	public async Task<IActionResult> UpdateOfficeAsync(Guid officeId, [FromForm] OfficeFormRequest formRequest)
 	{
+		var officeRequest = new OfficeRequest
+		{
+			Address = formRequest.Address,
+			RegistryPhoneNumber = formRequest.RegistryPhoneNumber,
+			IsActive = formRequest.IsActive
+		};
+
+		if (formRequest.Photo is not null)
+		{
+			officeRequest.Photo = formRequest.Photo.OpenReadStream();
+			officeRequest.PhotoContentType = formRequest.Photo.ContentType;
+		}
+
 		await _officeService.UpdateOfficeAsync(officeId, officeRequest);
 
 		return NoContent();
 	}
 
-	/// <summary>
-	/// Updates the status of an office
-	/// </summary>
-	/// <param name="officeId">The Id of the office</param>
-	/// <param name="isActive">The status of the office</param>
-	/// <remarks>
-	/// Sample request:
-	///		
-	///		PUT api/offices/office/officeId/status
-	///		{
-	///			"officeId": "9190327b-ebc1-41f7-a127-b2d70275f558",
-	///         "isActive": true
-	///		}
-	/// </remarks>
-	/// <response code="204">Returns if the office status was successfully updated</response>
-	/// <response code="404">If there is no office with the given id</response>
-	[HttpPut("office/{officeId:guid}/status")]
-	[ProducesResponseType(StatusCodes.Status204NoContent)]
-	[ProducesResponseType(StatusCodes.Status404NotFound)]
-	public async Task<IActionResult> UpdateOfficeStatus(Guid officeId, bool isActive)
-	{
-		await _officeService.UpdateOfficeStatusAsync(officeId, isActive);
-
-		return NoContent();
-	}
-
+	#region DeleteOfficeAsync
 	/// <summary>
 	/// Deletes an office
 	/// </summary>
@@ -235,6 +246,7 @@ public class OfficeController : ControllerBase
 	/// <returns></returns>
 	/// <response code="204">Returns if the office was successfully deleted</response>
 	/// <response code="404">If there is no office with the given id</response>
+	#endregion
 	[HttpDelete("office/{officeId:guid}")]
 	[ProducesResponseType(StatusCodes.Status204NoContent)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]

@@ -17,18 +17,9 @@ public interface IOfficeRepository
 	/// <summary>
 	/// Updates an existing office
 	/// </summary>
-	/// <param name="officeId">The Id of the office to update</param>
 	/// <param name="office">The updated office entity</param>
 	/// <returns></returns>
-	Task UpdateOfficeAsync(Guid officeId, Office office);
-
-	/// <summary>
-	/// method to update the status of an existing office
-	/// </summary>
-	/// <param name="officeId">The Id of the office to update</param>
-	/// <param name="isActive">The new status of the office</param>
-	/// <returns></returns>
-	Task UpdateOfficeStatusAsync(Guid officeId, bool isActive);
+	Task UpdateOfficeAsync(Office office);
 
 	/// <summary>
 	/// Method to remove an existing office

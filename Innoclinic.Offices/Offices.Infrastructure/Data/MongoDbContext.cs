@@ -25,10 +25,10 @@ public class MongoDbContext : IMongoDbContext
 	/// Initializes a new instance of the <see cref="MongoDbContext"/> class
 	/// </summary>
 	/// <param name="options">The options containing MongoDB configuration settings</param>
-	public MongoDbContext(IOptions<OfficeMongoDbSettings> options)
+	/// <param name="client"></param>
+	public MongoDbContext(IMongoClient client, IOptions<OfficeMongoDbSettings> options)
 	{
 		_options = options.Value;
-		var client = new MongoClient(_options.ConnectionString);
 		_database = client.GetDatabase(_options.DataBaseName);
 	}
 

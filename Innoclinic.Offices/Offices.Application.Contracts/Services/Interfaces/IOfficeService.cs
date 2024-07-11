@@ -29,13 +29,13 @@ public interface IOfficeService
 	/// <returns></returns>
 	Task<string> GetOfficePictureUrlByIdAsync(Guid officeId);
 
-    /// <summary>
-    /// Method to add a new office
-    /// </summary>
-    /// <param name="officeRequest">The request object containing the details of the office to add</param>
-    /// <param name="cancellationToken">Cancellation token for the asynchronous operation</param>
-    /// <returns>An OfficeDto object representing the added office</returns>
-    Task<OfficeDto> AddOfficeAsync(OfficeRequest officeRequest, CancellationToken cancellationToken);
+	/// <summary>
+	/// Method to add a new office
+	/// </summary>
+	/// <param name="officeRequest">The request object containing the details of the office to add</param>
+	/// <param name="cancellationToken">Cancellation token for the asynchronous operation</param>
+	/// <returns>An OfficeDto object representing the added office</returns>
+	Task<OfficeDto> AddOfficeAsync(OfficeRequest officeRequest, CancellationToken cancellationToken);
 
 	/// <summary>
 	/// Method to update the existing office
@@ -44,14 +44,6 @@ public interface IOfficeService
 	/// <param name="officeRequest">The request object containing the updated details of the office</param>
 	/// <returns>an OfficeDto object representing the updated office</returns>
 	Task<OfficeDto> UpdateOfficeAsync(Guid officeId, OfficeRequest officeRequest);
-
-	/// <summary>
-	/// Method to update the status of an office
-	/// </summary>
-	/// <param name="officeId">The Id of the office to update</param>
-	/// <param name="isActive">The new status of the office (active or inactive)</param>
-	/// <returns></returns>
-	Task<OfficeDto> UpdateOfficeStatusAsync(Guid officeId, bool isActive);
 
 	/// <summary>
 	/// Method to deletes an office by its Id
