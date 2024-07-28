@@ -95,7 +95,7 @@ public class BlobService : IBlobService
 	public async Task<string> UploadBlobAsync(Stream content, string contentType, string blobName, CancellationToken cancellationToken = default)
 	{
 		var blobClient = _blobClientFactory.CreateBlobClient($"{_blobContainerClient.Uri}/{blobName}");
-		_logger.LogInformation("Uploading blob {blobName} to container {ContainerName}", blobName, _options.ContainerName);
+		_logger.LogInformation("Uploading blob {blobName} to container {containerName}", blobName, _options.ContainerName);
 
 		await blobClient.UploadAsync(content, new BlobUploadOptions
 		{
