@@ -1,4 +1,4 @@
-﻿using Innoclinic.Shared.Constants;
+using Innoclinic.Shared.Constants;
 using Innoclinic.Shared.Requests.Offices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;

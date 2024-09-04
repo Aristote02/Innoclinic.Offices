@@ -19,7 +19,6 @@ builder.ConfigureJwtAuthentication();
 builder.Services.ConfigureBlobStorageServices();
 builder.ConfigureServices()
 	.ConfigureSwaggerGen();
-	
 
 var app = builder.Build();
 
