@@ -5,21 +5,19 @@ VisualStudioVersion = 17.10.35004.147
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{41868B05-38A2-463E-A2E4-DF9881D3CEE4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Offices.API", "Offices.API\Offices.API.csproj", "{AC33A317-0BDA-48B7-AAA3-7E7956C34CE4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Offices.API", "Offices.API\Offices.API.csproj", "{AC33A317-0BDA-48B7-AAA3-7E7956C34CE4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Offices.Application", "Offices.Application\Offices.Application.csproj", "{0B07E261-6DF1-4B81-A989-16392FAA0D53}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Offices.Application", "Offices.Application\Offices.Application.csproj", "{0B07E261-6DF1-4B81-A989-16392FAA0D53}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Offices.Application.Contracts", "Offices.Application.Contracts\Offices.Application.Contracts.csproj", "{543CEAA1-CDD8-480C-825E-26676689B3B0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Offices.Application.Contracts", "Offices.Application.Contracts\Offices.Application.Contracts.csproj", "{543CEAA1-CDD8-480C-825E-26676689B3B0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Offices.Contracts", "Offices.Contracts\Offices.Contracts.csproj", "{998138EB-272E-433F-B436-F91228B84402}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Offices.Contracts", "Offices.Contracts\Offices.Contracts.csproj", "{998138EB-272E-433F-B436-F91228B84402}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Offices.Domain", "Offices.Domain\Offices.Domain.csproj", "{937801F9-49CF-45FD-9CD7-AAEA2B70F6B1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Offices.Domain", "Offices.Domain\Offices.Domain.csproj", "{937801F9-49CF-45FD-9CD7-AAEA2B70F6B1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Offices.Infrastructure", "Offices.Infrastructure\Offices.Infrastructure.csproj", "{BA9DC232-6C7D-434F-A1CE-99100B6439E4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Offices.Infrastructure", "Offices.Infrastructure\Offices.Infrastructure.csproj", "{BA9DC232-6C7D-434F-A1CE-99100B6439E4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Offices.Presentation", "Offices.Presentation\Offices.Presentation.csproj", "{2EC0932F-74C3-477F-995D-837D72A9956E}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Offices.Shared", "Offices.Shared\Offices.Shared.csproj", "{769DD028-B9BE-4B4E-923E-7C19C5CB1EDF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Offices.Presentation", "Offices.Presentation\Offices.Presentation.csproj", "{2EC0932F-74C3-477F-995D-837D72A9956E}"
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{BE266E99-29F5-4EF7-91D7-F84F78E07667}"
 EndProject
@@ -57,10 +55,6 @@ Global
 		{2EC0932F-74C3-477F-995D-837D72A9956E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2EC0932F-74C3-477F-995D-837D72A9956E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2EC0932F-74C3-477F-995D-837D72A9956E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{769DD028-B9BE-4B4E-923E-7C19C5CB1EDF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{769DD028-B9BE-4B4E-923E-7C19C5CB1EDF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{769DD028-B9BE-4B4E-923E-7C19C5CB1EDF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{769DD028-B9BE-4B4E-923E-7C19C5CB1EDF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BE266E99-29F5-4EF7-91D7-F84F78E07667}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BE266E99-29F5-4EF7-91D7-F84F78E07667}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BE266E99-29F5-4EF7-91D7-F84F78E07667}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -77,7 +71,6 @@ Global
 		{937801F9-49CF-45FD-9CD7-AAEA2B70F6B1} = {41868B05-38A2-463E-A2E4-DF9881D3CEE4}
 		{BA9DC232-6C7D-434F-A1CE-99100B6439E4} = {41868B05-38A2-463E-A2E4-DF9881D3CEE4}
 		{2EC0932F-74C3-477F-995D-837D72A9956E} = {41868B05-38A2-463E-A2E4-DF9881D3CEE4}
-		{769DD028-B9BE-4B4E-923E-7C19C5CB1EDF} = {41868B05-38A2-463E-A2E4-DF9881D3CEE4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {10FCF8EC-8A60-486D-B8B0-C0720904BD26}

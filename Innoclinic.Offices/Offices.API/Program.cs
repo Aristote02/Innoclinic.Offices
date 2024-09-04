@@ -13,10 +13,13 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.Configure<BlobStorageConfigurations>(builder.Configuration
 	.GetSection("BlobStorageConfigurations"));
 
+builder.ConfigureCrossOriginRessourceSharing();
+builder.ConfigureJwtAuthentication();
+
 builder.Services.ConfigureBlobStorageServices();
 builder.ConfigureServices()
-	.ConfigureSwaggerGen()
-	.ConfigureJwtAuth(builder.Configuration);
+	.ConfigureSwaggerGen();
+	
 
 var app = builder.Build();
 
@@ -33,6 +36,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseExceptionMiddleware();
+
+app.UseCors();
 
 app.UseAuthorization();
 

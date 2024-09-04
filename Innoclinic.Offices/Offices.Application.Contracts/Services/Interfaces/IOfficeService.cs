@@ -1,5 +1,5 @@
-﻿using Offices.Shared.Dtos;
-using Offices.Shared.Requests;
+﻿using Innoclinic.Shared.DTOs.Offices;
+using Innoclinic.Shared.Requests.Offices;
 
 namespace Offices.Application.Contracts.Services.Interfaces;
 
@@ -12,8 +12,8 @@ public interface IOfficeService
 	/// <summary>
 	/// Method to retrieve all offices
 	/// </summary>
-	/// <returns>List of OfficeDto objects representing all offices</returns>
-	Task<List<OfficeDto>> GetAllOfficesAsync();
+	/// <returns>A collection of OfficeDto objects representing all offices</returns>
+	Task<IEnumerable<OfficeDto>> GetAllOfficesAsync();
 
 	/// <summary>
 	/// Method to retrieve office by its Id

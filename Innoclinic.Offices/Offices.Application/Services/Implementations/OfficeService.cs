@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
 using FluentValidation;
+using Innoclinic.Shared.DTOs.Offices;
+using Innoclinic.Shared.Requests.Offices;
 using Microsoft.Extensions.Logging;
 using Offices.Application.Contracts.Services.Interfaces;
 using Offices.Contracts.Repositories.Interfaces;
 using Offices.Domain.Entities;
 using Offices.Domain.Exceptions;
-using Offices.Shared.Dtos;
-using Offices.Shared.Requests;
 
 
 namespace Offices.Application.Services.Implementations;
@@ -104,12 +104,12 @@ public class OfficeService : IOfficeService
 	/// <summary>
 	/// Method to get all offices
 	/// </summary>
-	/// <returns>A list of OfficeDto objects</returns>
-	public async Task<List<OfficeDto>> GetAllOfficesAsync()
+	/// <returns>A collection of OfficeDto objects</returns>
+	public async Task<IEnumerable<OfficeDto>> GetAllOfficesAsync()
 	{
 		var offices = await _officeRepository.GetAllOfficesAsync();
 
-		return _mapper.Map<List<OfficeDto>>(offices);
+		return _mapper.Map<IEnumerable<OfficeDto>>(offices);
 	}
 
 	/// <summary>

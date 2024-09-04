@@ -19,8 +19,16 @@ using System.Text;
 
 namespace Offices.API.Extensions;
 
+/// <summary>
+/// Configures all the application service
+/// </summary>
 public static class ApplicationDependenciesConfiguration
 {
+	/// <summary>
+	/// Adds and configure all the services of the application
+	/// </summary>
+	/// <param name="builder">The WebApplicationBuilder</param>
+	/// <returns>The service collection</returns>
 	public static IServiceCollection ConfigureServices(this WebApplicationBuilder builder)
 	{
 		builder.ConfigureMongoDb();
@@ -32,6 +40,11 @@ public static class ApplicationDependenciesConfiguration
 		return builder.Services;
 	}
 
+	/// <summary>
+	/// Adds services to the <paramref name="services"/> collection
+	/// </summary>
+	///<param name="services">The <see cref="IServiceCollection"/> to which services are added</param>
+	/// <returns>The service collection</returns>
 	public static IServiceCollection AddServices(this IServiceCollection services)
 	{
 		services.AddScoped<IMongoDbContext, MongoDbContext>()
@@ -43,6 +56,11 @@ public static class ApplicationDependenciesConfiguration
 		return services;
 	}
 
+	/// <summary>
+	/// Adds Blob Storage related services to the <paramref name="services"/> collection
+	/// </summary>
+	/// <param name="services">The <see cref="IServiceCollection"/> to which services are added</param>
+	/// <returns>The service collection with added Blob Storage services</returns>
 	public static IServiceCollection ConfigureBlobStorageServices(this IServiceCollection services)
 	{
 		services.AddScoped<BlobServiceClient>(x =>
@@ -59,15 +77,49 @@ public static class ApplicationDependenciesConfiguration
 		return services;
 	}
 
+	/// <summary>
+	/// Configures Cross-Origin Resource Sharing (CORS) for the application
+	/// </summary>
+	/// <param name="builder">The WebApplicationBuilder used to configure services and middleware</param>
+	public static void ConfigureCrossOriginRessourceSharing(this WebApplicationBuilder builder)
+	{
+		builder.Services.AddCors(options =>
+		{
+			options.AddDefaultPolicy(
+				policy =>
+				{
+					policy.WithOrigins("*")
+					.AllowAnyHeader()
+					.AllowAnyMethod();
+				});
+		});
+	}
+
+	/// <summary>
+	/// Configures fluent validation
+	/// </summary>
+	/// <param name="services"></param>
+	/// <returns>The service collection with added validators</returns>
 	public static IServiceCollection AddValidators(this IServiceCollection services)
 	{
 		return services.AddValidatorsFromAssembly(Application.AssemblyReference.Assembly);
 	}
 
-	public static IServiceCollection ConfigureJwtAuth(this IServiceCollection services,
-		IConfiguration configuration)
+	/// <summary>
+	/// Configures the JWT authentication
+	/// </summary>
+	/// <param name="builder">The WebApplicationBuilder</param>
+	/// <returns>The service collection</returns>
+	/// <exception cref="InvalidOperationException">Thrown if the operation fails</exception>
+	public static IServiceCollection ConfigureJwtAuthentication(this WebApplicationBuilder builder)
 	{
-		services.AddAuthentication(options =>
+		var jwtSection = builder.Configuration.GetSection("Jwt");
+		if (!jwtSection.Exists() || !ValidateJwtSettings(jwtSection))
+		{
+			throw new InvalidOperationException("JWT configuration values are missing or invalid");
+		}
+
+		builder.Services.AddAuthentication(options =>
 		{
 			options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
 			options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -76,16 +128,24 @@ public static class ApplicationDependenciesConfiguration
 			{
 				options.TokenValidationParameters = new TokenValidationParameters
 				{
-					ValidateIssuer = false,
-					ValidateAudience = false,
+					ValidateIssuer = true,
+					ValidateAudience = true,
+					ValidateLifetime = true,
 					ValidateIssuerSigningKey = true,
-					IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration.GetValue<string>("JwtSecretKey:Key")))
+					ValidIssuer = jwtSection["Issuer"],
+					ValidAudience = jwtSection["Audience"],
+					IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSection["Key"]!))
 				};
 			});
 
-		return services;
+		return builder.Services;
 	}
 
+	/// <summary>
+	/// Configure swagger for API documentation
+	/// </summary>
+	/// <param name="services"></param>
+	/// <returns>The service collection with added Swagger configuration</returns>
 	public static IServiceCollection ConfigureSwaggerGen(this IServiceCollection services)
 	{
 		services.AddSwaggerGen(c =>
@@ -106,5 +166,17 @@ public static class ApplicationDependenciesConfiguration
 		});
 
 		return services;
+	}
+
+	/// <summary>
+	/// Validates JWT settings
+	/// </summary>
+	/// <param name="jwtSection">The configuration section containing JWT settings</param>
+	/// <returns>True if JWT settings are valid, otherwise false</returns>
+	private static bool ValidateJwtSettings(IConfigurationSection jwtSection)
+	{
+		return !string.IsNullOrEmpty(jwtSection["Issuer"]) &&
+			   !string.IsNullOrEmpty(jwtSection["Audience"]) &&
+			   !string.IsNullOrEmpty(jwtSection["Key"]);
 	}
 }

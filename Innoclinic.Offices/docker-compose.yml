@@ -9,7 +9,9 @@ services:
     depends_on:
       - azurite
       - mongodb
-  
+    networks:
+      - innoclinic
+
   azurite:
     image: mcr.microsoft.com/azure-storage/azurite:latest
     command: azurite --loose --blobHost 0.0.0.0 --blobPort 10020 --queueHost 0.0.0.0 --queuePort 10021 --tableHost 0.0.0.0 --tablePort 10022
@@ -21,7 +23,9 @@ services:
     volumes:
        - azuriteData:/data
     restart: on-failure
-  
+    networks:
+      - innoclinic
+
   mongodb:
     image: mongo
     container_name: mongodb
@@ -30,7 +34,14 @@ services:
       - 27017:27017
     volumes:
        - mongoDbData:/var/lib/mongo/data
+    networks:
+      - innoclinic
 
 volumes:
   azuriteData:
   mongoDbData:
+  
+networks:
+  innoclinic:
+    external:
+      name: innoclinic
