@@ -116,6 +116,7 @@ public class OfficeController : ControllerBase
 	/// <response code="400">If there is not any office with the given id</response>
 	#endregion
 	[HttpGet("{id:guid}/picture", Name = "GetOfficePictureById")]
+	[Authorize(Roles = $"{nameof(UserRole.Admin)},{nameof(UserRole.Receptionist)}")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public async Task<IActionResult> GetOfficePictureByIdAsync(Guid id)
