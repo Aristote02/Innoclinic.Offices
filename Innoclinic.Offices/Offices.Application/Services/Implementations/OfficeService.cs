@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using FluentValidation;
 using Innoclinic.Shared.DTOs.Offices;
 using Innoclinic.Shared.Requests.Offices;
