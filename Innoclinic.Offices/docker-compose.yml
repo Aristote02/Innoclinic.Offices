@@ -5,7 +5,10 @@ services:
     image: ${DOCKER_REGISTRY-}officesapi
     build:
       context: .
-      dockerfile: Offices.API/Dockerfile
+      dockerfile: Innoclinic.Offices/Innoclinic.Offices/Offices.API/Dockerfile
+    container_name: offices-api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
     depends_on:
       - azurite
       - mongodb

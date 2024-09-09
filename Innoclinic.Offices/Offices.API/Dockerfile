@@ -8,15 +8,7 @@ EXPOSE 8080
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["Offices.API/Offices.API.csproj", "Offices.API/"]
-COPY ["Offices.Application/Offices.Application.csproj", "Offices.Application/"]
-COPY ["Offices.Application.Contracts/Offices.Application.Contracts.csproj", "Offices.Application.Contracts/"]
-COPY ["Offices.Shared/Offices.Shared.csproj", "Offices.Shared/"]
-COPY ["Offices.Contracts/Offices.Contracts.csproj", "Offices.Contracts/"]
-COPY ["Offices.Domain/Offices.Domain.csproj", "Offices.Domain/"]
-COPY ["Offices.Infrastructure/Offices.Infrastructure.csproj", "Offices.Infrastructure/"]
-COPY ["Offices.Presentation/Offices.Presentation.csproj", "Offices.Presentation/"]
-COPY ["Offices.API/Innoclinic.pfx", "Offices.API/"]
+COPY ["Innoclinic.Offices/Innoclinic.Offices/.", "./"]
 RUN dotnet restore "./Offices.API/Offices.API.csproj"
 COPY . .
 WORKDIR "/src/Offices.API"
