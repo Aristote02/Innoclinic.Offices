@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Offices.Shared\Offices.Shared.csproj" />
+    <PackageReference Include="Innoclinic.Shared" Version="1.0.5" />
   </ItemGroup>
 
 </Project>

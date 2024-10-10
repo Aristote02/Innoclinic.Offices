@@ -1,7 +1,7 @@
-﻿using AutoMapper;
+using AutoMapper;
+using Innoclinic.Shared.DTOs.Offices;
+using Innoclinic.Shared.Requests.Offices;
 using Offices.Domain.Entities;
-using Offices.Shared.Dtos;
-using Offices.Shared.Requests;
 
 namespace Offices.Application.Profiles;
 

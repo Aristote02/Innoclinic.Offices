@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
+using Innoclinic.Shared.Constants;
+using Innoclinic.Shared.Requests.Offices;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Offices.Application.Contracts.Services.Interfaces;
-using Offices.Shared.Requests;
 
 namespace Offices.Presentation.Controllers;
 
@@ -47,6 +49,7 @@ public class OfficeController : ControllerBase
 	/// <response code="404">If there are not any single office in the database</response>
 	#endregion
 	[HttpGet]
+	[Authorize(Roles = $"{nameof(UserRole.Patient)},{nameof(UserRole.Doctor)},{nameof(UserRole.Receptionist)}")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public async Task<IActionResult> GetAllOfficesAsync()
@@ -81,6 +84,7 @@ public class OfficeController : ControllerBase
 	/// <response code="400">If there is not any office with the given id</response>
 	#endregion
 	[HttpGet("office/{id:guid}", Name = "GetOfficeById")]
+	[Authorize(Roles = $"{nameof(UserRole.Patient)},{nameof(UserRole.Doctor)},{nameof(UserRole.Receptionist)}")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public async Task<IActionResult> GetOfficeByIdAsync(Guid id)
@@ -112,6 +116,7 @@ public class OfficeController : ControllerBase
 	/// <response code="400">If there is not any office with the given id</response>
 	#endregion
 	[HttpGet("{id:guid}/picture", Name = "GetOfficePictureById")]
+	[Authorize(Roles = $"{nameof(UserRole.Admin)},{nameof(UserRole.Receptionist)}")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public async Task<IActionResult> GetOfficePictureByIdAsync(Guid id)
@@ -151,6 +156,7 @@ public class OfficeController : ControllerBase
 	/// <response code="500">If there was an internal server error</response>
 	#endregion
 	[HttpPost("office")]
+	[Authorize(Roles = $"{nameof(UserRole.Admin)},{nameof(UserRole.Receptionist)}")]
 	[ProducesResponseType(StatusCodes.Status201Created)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	[ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -206,6 +212,7 @@ public class OfficeController : ControllerBase
 	/// <response code="500">If there was an internal server error</response>
 	#endregion
 	[HttpPut("office/{officeId:guid}")]
+	[Authorize(Roles = $"{nameof(UserRole.Admin)},{nameof(UserRole.Receptionist)}")]
 	[ProducesResponseType(StatusCodes.Status204NoContent)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	[ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -248,6 +255,7 @@ public class OfficeController : ControllerBase
 	/// <response code="404">If there is no office with the given id</response>
 	#endregion
 	[HttpDelete("office/{officeId:guid}")]
+	[Authorize(Roles = $"{nameof(UserRole.Admin)},{nameof(UserRole.Receptionist)}")]
 	[ProducesResponseType(StatusCodes.Status204NoContent)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public async Task<IActionResult> DeleteOfficeAsync(Guid officeId)

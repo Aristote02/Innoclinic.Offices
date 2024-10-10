@@ -1,5 +1,5 @@
-﻿using FluentValidation;
-using Offices.Shared.Requests;
+using FluentValidation;
+using Innoclinic.Shared.Requests.Offices;
 
 namespace Offices.Application.Validators;
 
